@@ -17,9 +17,9 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping( "/payment" )
-    public ResponseEntity pagar(@RequestBody PaymentDto paymentDto){
+    public ResponseEntity newPayment(@RequestBody PaymentDto paymentDto){
         try {
-            paymentService.newPago( paymentDto );
+            paymentService.newPayment( paymentDto );
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -28,10 +28,21 @@ public class PaymentController {
     }
 
     @GetMapping( "/payments" )
-    public ResponseEntity<List<PaymentDto>> getPagos(){
+    public ResponseEntity<List<PaymentDto>> getPayments(){
         List<PaymentDto> paymentDtos = null;
         try {
-            paymentDtos = paymentService.getPagos();
+            paymentDtos = paymentService.getPayments();
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<PaymentDto>>(paymentDtos, HttpStatus.OK);
+    }
+
+    @GetMapping( "/order/{orderId}/payments" )
+    public ResponseEntity<List<PaymentDto>> getPaymentsByOrderId( @PathVariable String orderId ){
+        List<PaymentDto> paymentDtos = null;
+        try {
+            paymentDtos = paymentService.getPaymentsByOrderId( orderId );
         } catch (Exception e) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }

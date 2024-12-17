@@ -1,83 +1,50 @@
 package com.service.catering.application.service;
 
-//import com.service.catering.application.event.PaymentQuery;
 import com.service.catering.application.model.payment.*;
+import com.service.catering.application.service.interfaces.IOrderServiceUpdateStatus;
 import com.service.catering.application.utils.PaymentUtil;
-import com.service.catering.infraestructure.event.CommandEntitysEvent;
-//import com.service.catering.infraestructure.model.PaymentEntity;
-//import org.axonframework.messaging.responsetypes.ResponseTypes;
+import com.service.catering.domain.model.PaymentEntity;
+import com.service.catering.infraestructure.event.querys.IQueryPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.concurrent.CompletableFuture;
-//import java.util.concurrent.ExecutionException;
 
 @Service
-public class PaymentService {
-
-//    @Autowired
-//    private CommandGateway commandGateway;
-//    @Autowired
-//    private QueryGateway queryGateway;
+public class PaymentService extends BaseService{
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private IQueryPaymentRepository iQueryPaymentRepository;
 
+    @Autowired
+    private IOrderServiceUpdateStatus iOrderServiceUpdateStatus;
 
-    public void newPago(PaymentDto paymentDto) throws Exception {
-//        PaymentCommand paymentCommand = new PaymentCommand("2342", "hoy",
-//                PaymentStatus.PAID.name(),
-//                paymentDto.getInvoice().getInvoiceId(),
-//                paymentDto.getPaymentMethod().getPaymentMethodId(),
-//                paymentDto.getPrice().getAmount(),
-//                paymentDto.getPrice().getCurrency());
-//        commandGateway.sendAndWait(paymentCommand);
-
-        CommandEntitysEvent commandEntitysEvent = new CommandEntitysEvent( this, PaymentUtil.paymentDtoToPaymentEntity( paymentDto ));
-        applicationEventPublisher.publishEvent( commandEntitysEvent );
-
+    public void newPayment(PaymentDto paymentDto) throws Exception {
+        PaymentEntity paymentEntity = PaymentUtil.paymentDtoToPaymentEntity( paymentDto );
+        paymentEntity.setStatus( PaymentStatus.PAID.name() );
+//        CommandEntitysEvent commandEntitysEvent = new CommandEntitysEvent( this, paymentEntity);
+//        applicationEventPublisher.publishEvent( commandEntitysEvent );
+        commandHandler( this, paymentEntity );
+        iOrderServiceUpdateStatus.actualizarStatus( paymentEntity.getOrderId() );
     }
 
-    public List<PaymentDto> getPagos() throws Exception {
+    public List<PaymentDto> getPayments() throws Exception {
+        List<PaymentEntity> paymentEntities = iQueryPaymentRepository.queryPayment();
+        List<PaymentDto> paymentDtos = new ArrayList<>();
+        for (PaymentEntity paymentEntity : paymentEntities) {
+            paymentDtos.add( PaymentUtil.paymentEntityToPaymentDto( paymentEntity ) );
+        }
+        return paymentDtos;
+    }
 
-//
-//        CompletableFuture<List<PaymentEntity>> cPaymentEntities = queryGateway.query(new PaymentQuery(), ResponseTypes.multipleInstancesOf(PaymentEntity.class));
-//        if (!cPaymentEntities.isDone())
-//            new ResponseEntity(HttpStatus.NOT_FOUND);
-//        List<PaymentDto> paymentDtos = new ArrayList<>();
-//        List<PaymentEntity> paymentEntities = null;
-//        try {
-//            paymentEntities = cPaymentEntities.get();
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        } catch (ExecutionException e) {
-//            throw new RuntimeException(e);
-//        }
-//        for (PaymentEntity paymentEntity : paymentEntities) {
-//            PaymentDto paymentDto = new PaymentDto();
-//            paymentDto.setId(paymentEntity.getId());
-//            paymentDto.setCreatedDate(paymentEntity.getCreatedDate());
-//            paymentDto.setStatus(paymentEntity.getStatus());
-//            Invoice invoice = new Invoice();
-//            invoice.setInvoiceId(paymentEntity.getInvoiceId());
-//            paymentDto.setInvoice(invoice);
-//            PaymentMethod paymentMethod = new PaymentMethod();
-//            paymentMethod.setPaymentMethodId(paymentEntity.getPaymentMethodId());
-//            paymentDto.setPaymentMethod(paymentMethod);
-//            Price price = new Price();
-//            price.setCurrency(paymentEntity.getCurrency());
-//            price.setAmount(paymentEntity.getAmount());
-//            paymentDto.setPrice(price);
-//            paymentDtos.add(paymentDto);
-//        }
-//        return paymentDtos;
-
-        return new ArrayList<>();
+    public List<PaymentDto> getPaymentsByOrderId( String orderId ) throws Exception {
+        List<PaymentEntity> paymentEntities = iQueryPaymentRepository.queryPaymentsByOrderId( orderId );
+        List<PaymentDto> paymentDtos = new ArrayList<>();
+        for (PaymentEntity paymentEntity : paymentEntities) {
+            paymentDtos.add( PaymentUtil.paymentEntityToPaymentDto( paymentEntity ) );
+        }
+        return paymentDtos;
     }
 
 }
