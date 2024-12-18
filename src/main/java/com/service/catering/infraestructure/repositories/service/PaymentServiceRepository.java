@@ -1,5 +1,6 @@
 package com.service.catering.infraestructure.repositories.service;
 
+import com.service.catering.application.model.invoice.InvoiceDto;
 import com.service.catering.domain.model.PaymentEntity;
 import com.service.catering.domain.model.PaymentMethodEntity;
 import com.service.catering.infraestructure.event.querys.IQueryPaymentRepository;
@@ -43,4 +44,6 @@ public class PaymentServiceRepository implements IQueryPaymentRepository {
     public List<PaymentEntity> queryPaymentsByOrderId(String orderId) {
         return repository.findByOrderId( orderId );
     }
+
+
 }

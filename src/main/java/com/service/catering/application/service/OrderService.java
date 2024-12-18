@@ -17,6 +17,8 @@ import com.service.catering.infraestructure.event.querys.IQueryOrderRepository;
 import com.service.catering.infraestructure.event.querys.IQueryPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +60,7 @@ public class OrderService extends BaseService implements IOrderServiceUpdateStat
     }
 
     @Override
+    @Transactional( propagation = Propagation.MANDATORY)
     public void actualizarStatus(String orderId) throws  Exception{
         OrderEntity orderEntity = iQueryOrderRepository.queryOrder( orderId );
         List<PaymentEntity> paymentEntities = iQueryPaymentRepository.queryPaymentsByOrderId( orderId );
@@ -67,13 +70,14 @@ public class OrderService extends BaseService implements IOrderServiceUpdateStat
         }
         if ( orderEntity.getAmount() == sum ) {
             orderEntity.setStatus(OrderStatus.PAID.name());
-        } else if (orderEntity.getAmount() < sum){
+        } else if (orderEntity.getAmount() > sum){
             orderEntity.setStatus(OrderStatus.PARTIAL_PAYMENT.name());
         }
         iQueryOrderRepository.update(orderEntity);
     }
 
     @Override
+    @Transactional( propagation = Propagation.MANDATORY)
     public void generateOrdersForContract(String contractId) throws  Exception{
         ContractEntity contractEntity = iQueryContractRepository.queryContractId( contractId );
         if ( contractEntity.getQuotas() == 1 ) return;
@@ -84,7 +88,7 @@ public class OrderService extends BaseService implements IOrderServiceUpdateStat
             contract.setId( contractEntity.getId() );
             orderDto.setContract( contract );
             orderDto.setAmount( amount );
-            orderDto.setDescription( contractEntity.getDescription() + " - " + i );
+            orderDto.setDescription( contractEntity.getDescription() + " - " + (i+1) );
             newOrder( orderDto );
         }
     }

@@ -6,6 +6,8 @@ import com.service.catering.infraestructure.repositories.interfaces.ContractRepo
 import com.service.catering.infraestructure.utils.DateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;

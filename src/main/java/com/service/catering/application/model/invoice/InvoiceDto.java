@@ -1,7 +1,12 @@
 package com.service.catering.application.model.invoice;
 
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Setter
 @Getter
 public class InvoiceDto {
 
@@ -23,8 +28,8 @@ public class InvoiceDto {
     public String customerEmail;
     public String period;
     public String contratId;
-    public String totalDiscounts;
-    public String total;
+    public float totalDiscounts;
+    public float total;
     public String currency;
     public String taxCreditAmount;
     public String literalAmount;
@@ -32,6 +37,14 @@ public class InvoiceDto {
     public String legend2;
     public String legend3;
     public String status;
+    public String paymentId;
+    public String createdDate;
+    private List<InvoiceDetail> invoiceDetails;
 
-
+    public void addInvoiceDetail( InvoiceDetail invoiceDetail ){
+        if (invoiceDetails == null || invoiceDetails.isEmpty() ){
+            invoiceDetails = new ArrayList<>();
+        }
+        invoiceDetails.add( invoiceDetail );
+    }
 }

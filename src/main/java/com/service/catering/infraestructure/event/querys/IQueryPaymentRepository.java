@@ -1,5 +1,6 @@
 package com.service.catering.infraestructure.event.querys;
 
+import com.service.catering.application.model.invoice.InvoiceDto;
 import com.service.catering.domain.model.PaymentEntity;
 
 import java.util.List;

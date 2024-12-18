@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface InvoiceRepository extends JpaRepository<InvoiceEntity, String> {
 
-    @Query("SELECT u FROM Invoice u WHERE u.paymentId = ?1")
+    @Query("SELECT u FROM Invoices u WHERE u.paymentId = ?1")
     public List<InvoiceEntity> findByPaymentId(String paymentId);
 
 }

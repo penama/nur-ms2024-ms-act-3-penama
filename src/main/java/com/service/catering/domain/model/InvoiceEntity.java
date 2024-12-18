@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Entity(name = "Invoice")
+@Entity(name = "Invoices")
 @Data
 public class InvoiceEntity {
 
@@ -18,7 +18,7 @@ public class InvoiceEntity {
     public String companyCountry;
     public String companyNit;
     public String number;
-    public String authorization;
+    public String aaauthorization;
     public String placeOfEmission;
     public String createdDate;
     public String issueDate;
@@ -27,10 +27,10 @@ public class InvoiceEntity {
     public String customerAddress;
     public String customerEmail;
     public String period;
-    public String contratId;
+    public String contractId;
     public float totalDiscounts;
     public float total;
-    public float currency;
+    public String currency;
     public float taxCreditAmount;
     public String literalAmount;
     public String legend1;

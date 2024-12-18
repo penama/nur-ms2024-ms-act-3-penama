@@ -11,6 +11,8 @@ import com.service.catering.domain.model.ContractEntity;
 import com.service.catering.infraestructure.event.querys.IQueryContractRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class ContractService extends BaseService {
     @Autowired
     private IOrderServiceCreateByContract iOrderServiceCreateByContract;
 
+    @Transactional( propagation = Propagation.REQUIRED)
     public void newContract(ContractDto  contractDto) throws Exception {
         ContractEntity contractEntity = ContractUtil.contractDtoToContractEntity( contractDto );
         contractEntity.setStatus(ContractStatus.ACTIVE.name());

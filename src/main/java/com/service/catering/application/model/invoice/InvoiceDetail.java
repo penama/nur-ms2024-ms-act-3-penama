@@ -1,7 +1,9 @@
 package com.service.catering.application.model.invoice;
 
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class InvoiceDetail {
 
@@ -14,5 +16,6 @@ public class InvoiceDetail {
     public float  discount;
     public float  subtotal;
     public String currency;
-
+    public String invoiceId;
+    public String createdDate;
 }
